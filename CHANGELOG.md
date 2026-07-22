@@ -12,9 +12,10 @@
 - SteamDT 与 CSQAQ 可插拔市场适配器，以及单来源失败隔离和来源归属校验；
 - 12 个追加式 SQLite 迁移；
 - 专属 `cs2-item-agent` Skill、证据政策、工具契约和副作用边界；
-- 77 项自动化测试，以及本地 MCP 健康检查和协议冒烟；
+- 79 项自动化测试，以及带强制断言的本地 MCP 健康检查和协议验收；
 - Windows 与 Linux 的 Node.js 24 CI 发布验证。
 - MCP `health_check` 自带中文首次使用说明和动态 API Key 配置引导，只返回变量名、布尔状态、能力影响与安全验证方式，不返回秘密值。
+- 新增统一发布与功能升级验收标准；`npm run acceptance:check` 同时作为本地与 Windows/Linux CI 自动化发布门槛。
 
 ### Release boundaries
 

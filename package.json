@@ -23,6 +23,7 @@
     "skill:sync": "node scripts/sync-skill-adapters.mjs",
     "skill:check": "node scripts/sync-skill-adapters.mjs --check",
     "release:verify": "npm run skill:check && npm run mcp:config:check && npm run check && npm run smoke:mcp",
+    "acceptance:check": "npm run release:verify",
     "audit:steamdt-inspect": "tsx scripts/audit-steamdt-inspect.ts",
     "db:migrate": "npm run dev -- db migrate"
   },

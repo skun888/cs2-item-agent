@@ -141,6 +141,8 @@ DIY 的目录同步和补全会读取 CSQAQ 并写入本地缓存；推荐、预
 
 这些说明来自 MCP 协议响应，不依赖客户端是否正确展示 README，也不要求用户记住 npm 命令。Skill 仍负责更详细的工具选择和证据解释，两者共用同一安全边界。
 
+`health_check` 成功和 `configured_unverified` 都不是数据源端到端验收。公开发布与后续功能升级应按 [发布与功能升级验收标准](./RELEASE_ACCEPTANCE.md) 继续完成干净 Clone、代表性真实只读调用和副作用检查。
+
 ## 排错
 
 1. Node.js 版本错误时安装或切换到 Node.js 24，再重新打开项目；

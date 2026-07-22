@@ -55,11 +55,12 @@ Read [references/tool-contracts.md](references/tool-contracts.md) before using a
 
 1. Resolve the exact item variant. Prefer exact English `marketHashName`. Clarify wear, StatTrak, Souvenir, pattern, or other material variants only when needed.
 2. When the user asks how to start, configure a provider, or understand available capabilities, call `health_check` and present its `usageGuide`, `configurationGuide`, current status, and safe example prompts. Treat `configured_unverified` only as a value loaded by the current process. Tell the user to edit the local `.env` directly and restart MCP; never ask them to paste or reveal a secret in chat.
-3. Decide whether the question needs current data, local history, provider coverage, or a scenario calculation.
-4. Call the minimum tool set. Do not call holder, supply, DIY, or notification tools merely because they exist.
-5. Inspect per-adapter status, tool errors, and limitations before interpreting values. If the required adapter is not configured, explain the missing configuration without asking for the secret value in chat.
-6. Compare observation times before combining sources. Do not silently combine stale and fresh values as if simultaneous.
-7. Produce a decision-oriented Chinese answer using the response contract below.
+3. Never treat tool discovery, `health_check`, or `configured_unverified` as end-to-end provider acceptance. Require a successful representative read-only call before saying a current data source is usable.
+4. Decide whether the question needs current data, local history, provider coverage, or a scenario calculation.
+5. Call the minimum tool set. Do not call holder, supply, DIY, or notification tools merely because they exist.
+6. Inspect per-adapter status, tool errors, and limitations before interpreting values. If the required adapter is not configured, explain the missing configuration without asking for the secret value in chat.
+7. Compare observation times before combining sources. Do not silently combine stale and fresh values as if simultaneous.
+8. Produce a decision-oriented Chinese answer using the response contract below.
 
 Before any decision question, read [references/model-routing.md](references/model-routing.md). For broad market judgment, also read [references/market-methodology.md](references/market-methodology.md). For hanging, also read [references/hanging-analysis.md](references/hanging-analysis.md). For inventory or holder questions, read [references/inventory-monitoring.md](references/inventory-monitoring.md). For DIY, read [references/diy-guidance.md](references/diy-guidance.md).
 
