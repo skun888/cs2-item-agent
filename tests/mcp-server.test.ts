@@ -5,6 +5,7 @@ import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 
 import { AppError } from "../src/core/errors.js";
+import { createMcpConfigurationGuide } from "../src/mcp/configuration-guide.js";
 import { createMcpServer } from "../src/mcp/create-server.js";
 import { DEFAULT_FEE_TEMPLATE } from "../src/domain/fee-template.js";
 
@@ -106,8 +107,8 @@ test("MCP server lists the complete tools and answers health over the protocol",
         steamDt: (health.structuredContent as { steamDt: unknown }).steamDt,
       },
       {
-      ok: true,
-      steamDt: { configured: false },
+        ok: true,
+        steamDt: { configured: false },
       },
     );
     const usageGuide = (health.structuredContent as {
@@ -125,6 +126,26 @@ test("MCP server lists the complete tools and answers health over the protocol",
     assert.equal(usageGuide.safeExamplePrompts[0]?.route, "compare_market_prices");
     assert.match(usageGuide.sideEffects.trading, /不提供下单/);
     assert.match(usageGuide.configurationReminder, /本地 \.env/);
+    const configurationGuide = (health.structuredContent as {
+      configurationGuide: {
+        restartRequiredAfterChange: boolean;
+        summary: { configuredMarketProviderCount: number };
+        entries: readonly { variable: string; status: string }[];
+        nextActions: readonly string[];
+      };
+    }).configurationGuide;
+    assert.equal(configurationGuide.restartRequiredAfterChange, true);
+    assert.equal(configurationGuide.summary.configuredMarketProviderCount, 0);
+    assert.deepEqual(
+      configurationGuide.entries.map(({ variable, status }) => ({ variable, status })),
+      [
+        { variable: "STEAMDT_API_KEY", status: "not_configured" },
+        { variable: "CSQAQ_API_TOKEN", status: "not_configured" },
+        { variable: "STEAM_PROXY_URL", status: "not_configured" },
+        { variable: "WECHAT_WEBHOOK_URL", status: "not_configured" },
+      ],
+    );
+    assert.match(configurationGuide.nextActions.at(-1) ?? "", /不要把密钥粘贴到对话中/);
 
     const fees = await client.callTool({ name: "show_hanging_fee_assumptions", arguments: {} });
     assert.equal(fees.isError, undefined);
@@ -150,4 +171,19 @@ test("MCP server lists the complete tools and answers health over the protocol",
     await client.close();
     await server.close();
   }
+});
+
+test("MCP configuration guide reports booleans without copying secret values", () => {
+  const guide = createMcpConfigurationGuide({
+    steamDt: { configured: true, accidentalSecret: "steamdt-do-not-copy" },
+    csqaq: { configured: true, accidentalSecret: "csqaq-do-not-copy" },
+    steamProxy: { configured: true, accidentalSecret: "proxy-do-not-copy" },
+    wechat: { configured: true, accidentalSecret: "wechat-do-not-copy" },
+  });
+
+  assert.equal(guide.summary.configuredMarketProviderCount, 2);
+  assert.equal(guide.summary.fullDataSourceExperienceConfigured, true);
+  assert.ok(guide.entries.every((entry) => entry.status === "configured_unverified"));
+  assert.doesNotMatch(JSON.stringify(guide), /do-not-copy/);
+  assert.match(guide.nextActions.at(-1) ?? "", /不会自动发送测试消息/);
 });

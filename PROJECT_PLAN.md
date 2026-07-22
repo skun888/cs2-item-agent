@@ -1305,7 +1305,7 @@ CLI 新增 `market trade`，`market decide` 保留为兼容别名；MCP 新增 `
 2026-07-22 开始建立首个可回滚的源码发布基线，不改变阶段 0 至阶段 8 已确认的架构和产品边界。
 
 - 预发布版本统一为 `0.8.0-alpha.1`；
-- 当前能力基线为 42 个 MCP 工具、12 个 SQLite 迁移和 76 项自动化测试；
+- 当前能力基线为 42 个 MCP 工具、12 个 SQLite 迁移和 77 项自动化测试；
 - CI 在 Windows 与 Linux 的 Node.js 24 上运行 `npm ci` 和 `npm run release:verify`；
 - `release:verify` 统一执行严格类型检查、构建、完整测试与 MCP 协议冒烟；
 - `.agents/skills/cs2-item-agent` 是专属 Skill 的唯一权威来源，客户端适配入口由脚本生成并在发布验证中检查一致性；
@@ -1313,6 +1313,7 @@ CLI 新增 `market trade`，`market decide` 保留为兼容别名；MCP 新增 `
 - Trae Windows 实机界面已确认从项目根目录 `.trae/mcp.json` 加载项目级 MCP；仓库提交该配置，用户首次打开项目时只需开启“启用项目级 MCP”，不再手动填写服务器命令和绝对路径；
 - 客户端专门适配范围收敛为 Codex、Claude Code、Qoder、WorkBuddy 和 Trae；其他支持本地 stdio MCP 的客户端只保留通用配置兼容，不继续增加客户端专属核心或目录；
 - `scripts/run-mcp.mjs` 作为唯一自动启动器：Node.js 24 仍是外部前置条件；启动器自动创建且不覆盖 `.env`、按 `package-lock.json` 执行可复现依赖安装、按源码新旧决定构建、串行执行幂等数据库迁移，并把所有准备日志限制在 stderr；
+- MCP 初始化说明与 `health_check` 自带中文 `usageGuide` 和动态 `configurationGuide`；Agent 可按当前进程读取状态解释各变量启用的能力、填写位置、重启要求和安全验证方式，但不读取、回显或索取配置值；
 - `.local/mcp-bootstrap.lock` 防止多个 Agent 客户端首次打开同一仓库时并发修改依赖或数据库；首次准备超过客户端等待时间时可用 `npm run setup` 预热，不改变最终 MCP 启动入口；
 - `.env`、本地数据库、缓存、图片、真实 SteamID 和构建产物继续排除在 Git 基线之外；
 - 首个基线仍是源码预发布版本；预编译程序、Docker 和正式发行包继续属于后续安装体验里程碑。

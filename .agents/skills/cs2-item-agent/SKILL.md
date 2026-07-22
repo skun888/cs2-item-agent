@@ -25,7 +25,7 @@ Choose the narrowest route that answers the user:
 
 | User intent | Preferred route |
 |---|---|
-| Setup, first use, available capabilities, or missing data | `health_check`; follow its `usageGuide` and current configuration status |
+| Setup, API-key guidance, first use, available capabilities, or missing data | `health_check`; follow its `usageGuide`, `configurationGuide`, and current status |
 | Current price or visible book | `get_market_prices` |
 | Compare all configured market sources | `compare_market_prices` |
 | Price history only | `get_market_kline` |
@@ -54,7 +54,7 @@ Read [references/tool-contracts.md](references/tool-contracts.md) before using a
 ## Execution workflow
 
 1. Resolve the exact item variant. Prefer exact English `marketHashName`. Clarify wear, StatTrak, Souvenir, pattern, or other material variants only when needed.
-2. When the user asks how to start or what the Agent can do, call `health_check` and present its `usageGuide`, configured capabilities, missing prerequisites, and safe example prompts. Never ask the user to paste a secret into chat.
+2. When the user asks how to start, configure a provider, or understand available capabilities, call `health_check` and present its `usageGuide`, `configurationGuide`, current status, and safe example prompts. Treat `configured_unverified` only as a value loaded by the current process. Tell the user to edit the local `.env` directly and restart MCP; never ask them to paste or reveal a secret in chat.
 3. Decide whether the question needs current data, local history, provider coverage, or a scenario calculation.
 4. Call the minimum tool set. Do not call holder, supply, DIY, or notification tools merely because they exist.
 5. Inspect per-adapter status, tool errors, and limitations before interpreting values. If the required adapter is not configured, explain the missing configuration without asking for the secret value in chat.

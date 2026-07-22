@@ -23,6 +23,21 @@ npm run setup
 
 如需行情、综合决策和七日情景，确认 `.env` 中已配置 `STEAMDT_API_KEY`；CSQAQ 持有人、存世量、武器箱和挂刀候选需要 `CSQAQ_API_TOKEN`。公开库存工具本身不需要这两个 Key。项目级配置已经使用仓库相对路径，不需要用户修改安装目录；Node.js 必须能够通过系统 `PATH` 中的 `node` 命令启动。
 
+## API Key 配置引导
+
+用户可以直接问 Agent“我的 API Key 配置好了吗”或“还缺什么配置”。Agent 会调用 `health_check`，读取动态 `configurationGuide`，只展示变量名和状态，不展示任何配置值：
+
+| 本地 `.env` 变量 | 用途 | 未填写的影响 |
+| --- | --- | --- |
+| `STEAMDT_API_KEY` | SteamDT 行情、K 线、综合决策、七日挂刀评估和检视预览 | 这些能力不可用；公开 Steam 库存仍可用 |
+| `CSQAQ_API_TOKEN` | 持有人、供给、挂刀候选、武器箱、板块、汰换和 DIY 目录 | 这些增强能力不可用；使用前还需在 CSQAQ 绑定当前公网 IP |
+| `STEAM_PROXY_URL` | 无法直连 Steam Community 时使用本机 HTTP 代理 | 通常无需填写；不会影响 SteamDT 或 CSQAQ |
+| `WECHAT_WEBHOOK_URL` | 企业微信告警和库存监控通知 | 仅通知不可用，不影响分析 |
+
+状态 `configured_unverified` 只表示当前 MCP 进程读取到了非空值，不代表 Key 有效、接口有权限、额度可用或网络可达。修改 `.env` 后必须重启或重新加载 `cs2-item-agent` MCP，再调用 `health_check`。SteamDT 和 CSQAQ 可通过引导给出的只读工具验证；企业微信测试会真实发送消息，只有用户明确要求时才执行。
+
+不要把 Key、Token、Webhook、Cookie 或带认证信息的代理地址发进聊天、截图、Issue 或 Git。Agent 应指导用户直接编辑本地 `.env`，不得要求用户在对话中粘贴秘密。
+
 国内网络若无法直连 Steam Community，可在 `.env` 增加：
 
 ```text

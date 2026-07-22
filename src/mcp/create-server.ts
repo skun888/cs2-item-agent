@@ -34,6 +34,7 @@ import type { DecisionAnalysisRequest, ItemDecisionReport } from "../services/de
 import type { DiyService } from "../services/diy-service.js";
 import type { InventoryValuationSnapshot } from "../domain/inventory-valuation.js";
 import type { MarketTradingContext } from "../domain/market-trading-model.js";
+import { createMcpConfigurationGuide } from "./configuration-guide.js";
 import { MCP_USAGE_GUIDE } from "./usage-guide.js";
 
 export interface McpMarketService {
@@ -253,7 +254,7 @@ export function createMcpServer(dependencies: McpDependencies): McpServer {
     { name: "cs2-item-agent", version: "0.8.0-alpha.1" },
     {
       instructions:
-        "Use these tools for current CS2 market facts, deterministic analysis, CSQAQ monitored-coverage intelligence, hanging scenarios, public Steam inventory observations, and local DIY recommendations. When the user asks how to start, what is configured, or what the server can do, call health_check first and use its usageGuide. Choose the narrowest read-only tool that answers the question. For decision questions prefer analyze_market_trading; analyze_item_decision is its compatibility alias. For hanging questions first show fee assumptions, then screen candidates and assess only the selected candidate. DIY provider fields are facts, while visual tags and scores are local heuristics. A DIY image is a real game render only when render_diy_preview returns mode=steamdt_game_render; inspect_code_only means the Agent must return the inspect code and must not present a generic overlay as an attached result. Feedback must come from the user. Always preserve source, observedAt, confidence, fee assumptions, coverage, and limitations. CSQAQ holder rankings are monitored-sample coverage, never all-network. Private, unavailable, rate-limited, or failed inventory requests are unknown, never empty. Inventory disappearance does not prove a sale. Seven-day outputs are scenarios, not predictions. Never request secrets, claim guaranteed profit, execute trades, or trigger monitoring and notifications without clear user intent.",
+        "Use these tools for current CS2 market facts, deterministic analysis, CSQAQ monitored-coverage intelligence, hanging scenarios, public Steam inventory observations, and local DIY recommendations. When the user asks how to start, what is configured, how to configure an API key, or what the server can do, call health_check first and use its usageGuide and configurationGuide. Explain only variable names, status, capabilities, and local editing steps; never request or repeat secret values in chat. Treat configured_unverified as loaded but not remotely verified. Choose the narrowest read-only tool that answers the question. For decision questions prefer analyze_market_trading; analyze_item_decision is its compatibility alias. For hanging questions first show fee assumptions, then screen candidates and assess only the selected candidate. DIY provider fields are facts, while visual tags and scores are local heuristics. A DIY image is a real game render only when render_diy_preview returns mode=steamdt_game_render; inspect_code_only means the Agent must return the inspect code and must not present a generic overlay as an attached result. Feedback must come from the user. Always preserve source, observedAt, confidence, fee assumptions, coverage, and limitations. CSQAQ holder rankings are monitored-sample coverage, never all-network. Private, unavailable, rate-limited, or failed inventory requests are unknown, never empty. Inventory disappearance does not prove a sale. Seven-day outputs are scenarios, not predictions. Never request secrets, claim guaranteed profit, execute trades, or trigger monitoring and notifications without clear user intent.",
     },
   );
 
@@ -262,11 +263,18 @@ export function createMcpServer(dependencies: McpDependencies): McpServer {
     {
       title: "CS2 Item Agent health",
       description:
-        "Start here for setup and first use. Check the local database and registered market-adapter capabilities/configuration, and return a built-in Chinese usage guide without revealing secrets.",
+        "Start here for setup, API-key guidance, and first use. Check local capabilities/configuration and return built-in Chinese usage and configuration guides without revealing secrets.",
       inputSchema: {},
       annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: false },
     },
-    async () => toolResult({ ...dependencies.health(), usageGuide: MCP_USAGE_GUIDE }),
+    async () => {
+      const health = dependencies.health();
+      return toolResult({
+        ...health,
+        usageGuide: MCP_USAGE_GUIDE,
+        configurationGuide: createMcpConfigurationGuide(health),
+      });
+    },
   );
 
   server.registerTool(

@@ -4,7 +4,7 @@ CS2 Item Agent 是一个免费开源、本地优先、模型无关的 CS2 饰品
 
 当前已经完成阶段 8，并在其后补齐库存估值、用户自定义组合告警、可插拔行情适配器、CSQAQ 板块指数与 K 线、本地收藏品/稀有度/汰换关系目录，以及相互独立的行情交易与挂刀执行模型。专属 Skill 已覆盖全部 42 个 MCP 工具，并固化工具路由、证据等级、不确定性表达、副作用确认和跨 Agent 适配规范。
 
-当前发布基线为 `0.8.0-alpha.1`：包含 42 个 MCP 工具、12 个 SQLite 迁移和 76 项自动化测试。Windows 与 Linux 均使用 Node.js 24 执行严格类型检查、构建、测试和 MCP 协议冒烟；该版本仍是源码预发布基线，不代表已经发布到 npm。
+当前发布基线为 `0.8.0-alpha.1`：包含 42 个 MCP 工具、12 个 SQLite 迁移和 77 项自动化测试。Windows 与 Linux 均使用 Node.js 24 执行严格类型检查、构建、测试和 MCP 协议冒烟；该版本仍是源码预发布基线，不代表已经发布到 npm。
 
 ## Agent 项目接入
 
@@ -14,7 +14,7 @@ CS2 Item Agent 是一个免费开源、本地优先、模型无关的 CS2 饰品
 
 Trae Windows 实机界面已确认项目级配置路径为 `.trae/mcp.json`；用户首次打开仓库时需要开启“启用项目级 MCP”，之后由 Trae 加载仓库配置并启动统一启动器。完整步骤见 [MCP 接入说明](./docs/MCP_SETUP.md)。
 
-MCP 启动后不需要手动运行下面的 CLI 命令。用户可以直接在 Agent 对话中说“怎么开始”“检查 CS2 Item Agent 配置”或提出具体的 CS2 饰品问题；Agent 会先调用 `health_check`，读取 MCP 自带的中文 `usageGuide`、当前配置状态、六类能力和安全示例，再选择相应工具。CLI 仅供开发、排错和独立验证使用。
+MCP 启动后不需要手动运行下面的 CLI 命令。用户可以直接在 Agent 对话中说“怎么开始”“我的 API Key 配置好了吗”“还缺什么配置”或提出具体的 CS2 饰品问题；Agent 会先调用 `health_check`，读取 MCP 自带的中文 `usageGuide`、动态 `configurationGuide`、当前配置状态、六类能力和安全示例，再选择相应工具。配置引导只显示变量名和 `configured_unverified` / `not_configured` 状态，不显示任何秘密；用户直接编辑本地 `.env` 并重启 MCP。CLI 仅供开发、排错和独立验证使用。
 
 ## 本地运行
 
