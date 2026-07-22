@@ -1,18 +1,42 @@
 # 本地 MCP 接入
 
-CS2 Item Agent 使用本地 `stdio` MCP。MCP 客户端启动 `scripts/run-mcp.mjs`，启动器会自动切换到仓库目录，再由核心读取本地 `.env`。不要把 SteamDT 或 CSQAQ Key 写进 MCP 配置。
+CS2 Item Agent 使用本地 `stdio` MCP。所有客户端都启动同一个 `scripts/run-mcp.mjs`，启动器会自动切换到仓库目录，再由核心读取本地 `.env`。不要把 SteamDT、CSQAQ Key 或企业微信 Webhook 写进 MCP 配置。
 
-## 准备
+## 自动准备
 
-在仓库根目录运行：
+只需预先安装 Node.js 24 或更高版本。项目级 MCP 客户端启动 `scripts/run-mcp.mjs` 后会自动：
+
+1. 检查 Node.js 主版本；启动器本身依赖 Node.js，因此不会尝试替用户安装运行时；
+2. 从 `.env.example` 创建本地 `.env`，已有 `.env` 永远不会被覆盖；
+3. 缺少依赖或 `package-lock.json` 更新时运行 `npm ci --no-audit --no-fund`；
+4. 缺少构建产物或 `src/**/*.ts`、包清单、TypeScript 配置更新时运行 `npm run build`；
+5. 串行执行 12 个幂等 SQLite 迁移；
+6. 启动本地 stdio MCP。
+
+首次安装需要访问 npm registry，可能超过某些客户端的默认 MCP 等待时间。遇到超时时，在仓库根目录先运行一次：
 
 ```powershell
-npm install
-npm run build
-npm run dev -- health
+npm run setup
 ```
 
-如需行情、综合决策和七日情景，确认 `.env` 中已配置 `STEAMDT_API_KEY`；CSQAQ 持有人、存世量、武器箱和挂刀候选需要 `CSQAQ_API_TOKEN`。公开库存工具本身不需要这两个 Key。MCP 配置中的脚本路径必须改成用户电脑上的绝对路径。
+该命令只做准备和迁移，不常驻启动 MCP。准备完成后重启客户端 MCP 即可。
+
+如需行情、综合决策和七日情景，确认 `.env` 中已配置 `STEAMDT_API_KEY`；CSQAQ 持有人、存世量、武器箱和挂刀候选需要 `CSQAQ_API_TOKEN`。公开库存工具本身不需要这两个 Key。项目级配置已经使用仓库相对路径，不需要用户修改安装目录；Node.js 必须能够通过系统 `PATH` 中的 `node` 命令启动。
+
+## API Key 配置引导
+
+用户可以直接问 Agent“我的 API Key 配置好了吗”或“还缺什么配置”。Agent 会调用 `health_check`，读取动态 `configurationGuide`，只展示变量名和状态，不展示任何配置值：
+
+| 本地 `.env` 变量 | 用途 | 未填写的影响 |
+| --- | --- | --- |
+| `STEAMDT_API_KEY` | SteamDT 行情、K 线、综合决策、七日挂刀评估和检视预览 | 这些能力不可用；公开 Steam 库存仍可用 |
+| `CSQAQ_API_TOKEN` | 持有人、供给、挂刀候选、武器箱、板块、汰换和 DIY 目录 | 这些增强能力不可用；使用前还需在 CSQAQ 绑定当前公网 IP |
+| `STEAM_PROXY_URL` | 无法直连 Steam Community 时使用本机 HTTP 代理 | 通常无需填写；不会影响 SteamDT 或 CSQAQ |
+| `WECHAT_WEBHOOK_URL` | 企业微信告警和库存监控通知 | 仅通知不可用，不影响分析 |
+
+状态 `configured_unverified` 只表示当前 MCP 进程读取到了非空值，不代表 Key 有效、接口有权限、额度可用或网络可达。修改 `.env` 后必须重启或重新加载 `cs2-item-agent` MCP，再调用 `health_check`。SteamDT 和 CSQAQ 可通过引导给出的只读工具验证；企业微信测试会真实发送消息，只有用户明确要求时才执行。
+
+不要把 Key、Token、Webhook、Cookie 或带认证信息的代理地址发进聊天、截图、Issue 或 Git。Agent 应指导用户直接编辑本地 `.env`，不得要求用户在对话中粘贴秘密。
 
 国内网络若无法直连 Steam Community，可在 `.env` 增加：
 
@@ -22,39 +46,35 @@ STEAM_PROXY_URL=http://127.0.0.1:7890
 
 端口按用户本地代理软件修改。不要把带认证信息的代理地址写入 MCP 配置或提交到仓库。
 
-## Codex
+## 已提交的项目级配置
 
-Codex、ChatGPT 桌面端和 Codex IDE 扩展共享同一份本地 MCP 配置。可以在设置中的 MCP servers 页面添加 STDIO 服务，也可以使用 CLI：
+| 客户端 | 仓库配置 | 打开项目后的行为 |
+| --- | --- | --- |
+| Codex | `.codex/config.toml` | 在可信项目中发现 `cs2_item_agent` 并启动本地 stdio 服务；可用 `/mcp` 检查状态 |
+| Claude Code | `.mcp.json` | 发现项目作用域的 `cs2-item-agent`；首次使用需批准项目 MCP |
+| Qoder | `.mcp.json` | 发现项目作用域的 `cs2-item-agent`；已有会话可用 `/mcp reload` 重新加载 |
+| Trae | `.trae/mcp.json` | 在设置的 MCP 页面开启“启用项目级 MCP”后，从项目根目录加载并启动 `cs2-item-agent` |
+| WorkBuddy | `.workbuddy/mcp.json` | 打开项目后读取项目 MCP 配置并启动同一服务 |
 
-```powershell
-codex mcp add cs2-item-agent -- node "C:\绝对路径\cs2-item-agent\scripts\run-mcp.mjs"
-```
+这些配置负责发现统一启动器，启动器负责准备依赖、构建、迁移和启动 MCP。客户端要求“信任项目”“批准 MCP”属于本地命令执行的安全边界，项目不能也不应该绕过。Codex 的项目配置为首次安装保留 300 秒启动时间；其他客户端若提前超时，可使用上面的 `npm run setup` 预热。
 
-也可以把 `examples/mcp/codex.config.toml` 中的配置复制到用户级 `~/.codex/config.toml`，或可信仓库的 `.codex/config.toml`。保存后重启 MCP 服务或客户端，再用 `/mcp` 查看连接状态。
-
-## Qoder
-
-Qoder CLI 可以运行：
-
-```powershell
-qodercli mcp add cs2-item-agent -- node "C:\绝对路径\cs2-item-agent\scripts\run-mcp.mjs"
-```
-
-Qoder IDE 可以打开 Settings → MCP → My Servers，添加 STDIO 服务，并参考 `examples/mcp/qoder.mcp.json`。已有会话中修改配置后，重新加载 MCP 或新建会话。
+对应官方说明：[Codex MCP](https://learn.chatgpt.com/docs/extend/mcp)、[Claude Code MCP](https://code.claude.com/docs/en/mcp)、[Qoder MCP Servers](https://docs.qoder.com/en/cli/mcp-servers)、[WorkBuddy MCP 指南](https://www.codebuddy.cn/docs/workbuddy/From-Beginner-to-Expert-Guide/Function-Description/MCP-Guide)。
 
 ## Trae
 
-在 Trae 的 MCP 管理页面手动添加 STDIO 服务：
+Trae Windows 实机界面已确认项目级 MCP 从项目根目录 `.trae/mcp.json` 加载。首次打开 Clone 的仓库时：
 
-- Name：`cs2-item-agent`
-- Command：`node`
-- Args：本地 `scripts/run-mcp.mjs` 的绝对路径
+1. 按 `Ctrl + ,` 打开设置并搜索 `MCP`；
+2. 打开“启用项目级 MCP”；
+3. 确认服务器列表出现 `cs2-item-agent`；
+4. 批准项目本地命令并等待首次自动准备完成；
+5. 填写 `.env` 后重启 MCP，再实际调用 `health_check`。
 
-也可以参考 `examples/mcp/trae.mcp.json`。不同 Trae 版本的设置入口可能变化，应以当前官方 MCP 页面为准。
+启用项目级 MCP 是一次安全授权，不需要用户手动填写服务器命令或仓库绝对路径。参考：[Trae MCP 文档](https://docs.trae.ai/ide/model-context-protocol)、[Trae 更新日志](https://www.trae.ai/changelog)。
 
 ## 其他 MCP 客户端
 
-项目并不只支持上述三个客户端。任何能够启动本地 stdio MCP、接受 `command + args` 的 Agent 都能使用同一个核心，可参考 `examples/mcp/generic.stdio.json`。Cursor、Cline、Windsurf 等客户端只需要把脚本绝对路径填入各自 MCP 设置；具体设置入口以客户端当前版本为准。
+项目并不只支持上述客户端。任何能够启动本地 stdio MCP、接受 `command + args` 的 Agent 都能使用同一个核心，可参考 `examples/mcp/generic.stdio.json`。如果客户端支持仓库相对路径，可直接使用示例；否则只需把脚本改为本机绝对路径。项目只为 Codex、Claude Code、Qoder、WorkBuddy 和 Trae 维护专门适配，其他客户端不再增加专属核心或目录。
 
 ## 工具
 
@@ -109,10 +129,26 @@ DIY 的目录同步和补全会读取 CSQAQ 并写入本地缓存；推荐、预
 
 所有工具只读取公开外部数据并写入用户本地观察数据库，不执行购买、出售、挂单或交易。库存不可见、限流或失败时不会生成移除事件。本地持有人排行不是全网排行。
 
+## MCP 自带的首次使用说明
+
+客户端连接成功后，MCP 初始化说明会要求 Agent 在用户询问“怎么开始”“能做什么”或“配置好了吗”时优先调用 `health_check`。该工具除保留数据库、适配器和本地配置状态外，还会返回 `usageGuide`：
+
+- 项目用途和首次使用顺序；
+- 可直接复制提问的安全示例及建议工具路由；
+- 证据、时间、覆盖范围和未知状态的回答规则；
+- 本地写入、外部通知与禁止交易的副作用边界；
+- `.env` 仅保存在本地、修改后需重启 MCP 的提醒。
+
+这些说明来自 MCP 协议响应，不依赖客户端是否正确展示 README，也不要求用户记住 npm 命令。Skill 仍负责更详细的工具选择和证据解释，两者共用同一安全边界。
+
+`health_check` 成功和 `configured_unverified` 都不是数据源端到端验收。公开发布与后续功能升级应按 [发布与功能升级验收标准](./RELEASE_ACCEPTANCE.md) 继续完成干净 Clone、代表性真实只读调用和副作用检查。
+
 ## 排错
 
-1. 先运行 `npm run build`；
-2. 再运行 `npm run dev -- health`；
-3. 直接执行 `node scripts/run-mcp.mjs` 时没有普通终端输出是正常现象，stdio 正在等待 MCP 客户端消息；
-4. MCP 服务器不得向 stdout 打印日志，否则会破坏 JSON-RPC；诊断信息只能进入 stderr；
-5. Windows 路径必须使用绝对路径；JSON 中的反斜杠需要写成 `\\`。
+1. Node.js 版本错误时安装或切换到 Node.js 24，再重新打开项目；
+2. `npm ci` 失败时检查 npm registry、代理和网络，再运行 `npm run setup`；
+3. 填写新生成的 `.env` 后必须重启 MCP，正在运行的进程不会热加载 Key；
+4. 直接执行 `node scripts/run-mcp.mjs` 时只有 stderr 准备日志、没有普通 stdout 是正常现象，stdio 正在等待 MCP 客户端消息；
+5. MCP 服务器与自动启动器不得向 stdout 打印诊断日志，否则会破坏 JSON-RPC；
+6. 项目级配置不要改成用户专属绝对路径；所有已适配客户端都通过仓库相对路径启动统一启动器；
+7. 运行 `npm run mcp:config:check` 可检查已提交配置是否仍然无密钥、无绝对路径并统一使用共享启动器。

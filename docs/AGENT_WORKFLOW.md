@@ -2,7 +2,7 @@
 
 CS2 Item Agent 不内置云模型。Codex、Qoder、Trae、Cursor、Cline、Windsurf 或其他支持本地 stdio MCP 的客户端负责理解用户问题；本项目的 MCP 负责获取事实、运行确定性计算并返回可解释报告。
 
-阶段 8 后，`skills/cs2-item-agent/SKILL.md` 是模型侧工具路由与表达规范的主入口，`references/` 按需提供双模型路由、市场方法、挂刀情景、库存覆盖、DIY 和证据政策。MCP 仍是唯一事实与计算执行层；Skill 或知识库不能替代实时接口结果。
+阶段 8 后，`.agents/skills/cs2-item-agent/SKILL.md` 是模型侧工具路由与表达规范的唯一权威来源，`references/` 按需提供双模型路由、市场方法、挂刀情景、库存覆盖、DIY 和证据政策。客户端专用 Skill 路径只保存自动生成的适配入口。MCP 仍是唯一事实与计算执行层；Skill 或知识库不能替代实时接口结果。
 
 ## 推荐路由
 

@@ -32,4 +32,4 @@ jobs:
         run: npm ci
 
       - name: Verify release baseline
-        run: npm run release:verify
+        run: npm run acceptance:check
