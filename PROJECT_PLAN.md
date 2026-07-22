@@ -1,6 +1,6 @@
 # CS2 Item Agent 开发思路与工程规范
 
-> 状态：阶段 0 至阶段 8 已完成；进入真实使用反馈与发布准备
+> 状态：阶段 0 至阶段 8 已完成；`v0.8.0-alpha.1` 已公开预发布，进入真实用户反馈与后续迭代
 > 更新日期：2026-07-22
 > 项目性质：免费开源、本地优先、模型无关
 
@@ -8,7 +8,7 @@
 
 CS2 Item Agent 是一个免费开源、在用户本地运行的 CS2 饰品市场决策助手。
 
-用户只需配置自己的 SteamDT API Key，即可通过 Codex、Qoder、Trae 等支持本地命令或 MCP 的 Agent 工具：
+用户安装 Node.js 24、Clone 仓库并通过支持本地 stdio MCP 的 Agent 打开后，可按需配置自己的 SteamDT API Key 与 CSQAQ Token；公开 Steam 库存不需要 API Key：
 
 - 查询 SteamDT 聚合的多平台价格、在售量、求购价、求购量和 K 线；
 - 监控指定公开 SteamID 的库存变化；
@@ -1239,7 +1239,7 @@ SQLite migration 10 新增 `composite_alert_rules`、`composite_alert_evaluation
 - `run_alert_rules_once` 同时运行旧单阈值和新组合规则；
 - 企业微信显示每个叶子条件的值、来源和时间，SteamID 优先使用监控标签，否则脱敏。
 
-Steam个人交易历史不进入首版开发计划。后续主线为可插拔平台适配器、真实市场案例与 Skill 迭代、真实使用验收和发布打包。
+Steam个人交易历史不进入首版开发计划。首个源码预发布版本完成后，后续主线为真实用户反馈、尚未执行的客户端实机验收、可插拔平台适配器、真实市场案例与 Skill 迭代。
 
 ## 28. 可插拔平台适配器
 
@@ -1302,7 +1302,7 @@ CLI 新增 `market trade`，`market decide` 保留为兼容别名；MCP 新增 `
 
 ## 31. 发布基线
 
-2026-07-22 开始建立首个可回滚的源码发布基线，不改变阶段 0 至阶段 8 已确认的架构和产品边界。
+2026-07-22 建立并公开发布首个可回滚的源码预发布版本 [v0.8.0-alpha.1](https://github.com/skun888/cs2-item-agent/releases/tag/v0.8.0-alpha.1)，不改变阶段 0 至阶段 8 已确认的架构和产品边界。
 
 - 预发布版本统一为 `0.8.0-alpha.1`；
 - 当前能力基线为 42 个 MCP 工具、12 个 SQLite 迁移和 79 项自动化测试；
@@ -1317,4 +1317,5 @@ CLI 新增 `market trade`，`market decide` 保留为兼容别名；MCP 新增 `
 - `docs/RELEASE_ACCEPTANCE.md` 统一定义自动化、干净 Clone 实机、真实只读数据源和安全副作用门槛；`npm run acceptance:check` 是本地与 CI 的统一自动化入口，MCP 冒烟对 42 工具、健康说明、配置状态和秘密字段边界执行强制断言；
 - `.local/mcp-bootstrap.lock` 防止多个 Agent 客户端首次打开同一仓库时并发修改依赖或数据库；首次准备超过客户端等待时间时可用 `npm run setup` 预热，不改变最终 MCP 启动入口；
 - `.env`、本地数据库、缓存、图片、真实 SteamID 和构建产物继续排除在 Git 基线之外；
-- 首个基线仍是源码预发布版本；预编译程序、Docker 和正式发行包继续属于后续安装体验里程碑。
+- Windows/Linux CI、79 项自动化测试、42 个 MCP 工具协议验收、Trae Windows 干净 Clone，以及 SteamDT、CSQAQ 和公开库存真实只读验收均已通过；其余目标客户端的实机状态继续按 `docs/RELEASE_ACCEPTANCE.md` 记为 `NOT_RUN`；
+- 首个版本以 GitHub 源码 Pre-release 形式交付；预编译程序、Docker、npm 包和正式稳定版继续属于后续安装体验里程碑。

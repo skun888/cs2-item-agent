@@ -1,6 +1,6 @@
 # 本地 MCP 接入
 
-CS2 Item Agent 使用本地 `stdio` MCP。所有客户端都启动同一个 `scripts/run-mcp.mjs`，启动器会自动切换到仓库目录，再由核心读取本地 `.env`。不要把 SteamDT、CSQAQ Key 或企业微信 Webhook 写进 MCP 配置。
+CS2 Item Agent 使用本地 `stdio` MCP。仓库为已适配客户端提供的项目级配置都指向同一个 `scripts/run-mcp.mjs`，启动器会自动切换到仓库目录，再由核心读取本地 `.env`。不要把 SteamDT、CSQAQ Key 或企业微信 Webhook 写进 MCP 配置。
 
 ## 自动准备
 
@@ -58,7 +58,9 @@ STEAM_PROXY_URL=http://127.0.0.1:7890
 
 这些配置负责发现统一启动器，启动器负责准备依赖、构建、迁移和启动 MCP。客户端要求“信任项目”“批准 MCP”属于本地命令执行的安全边界，项目不能也不应该绕过。Codex 的项目配置为首次安装保留 300 秒启动时间；其他客户端若提前超时，可使用上面的 `npm run setup` 预热。
 
-对应官方说明：[Codex MCP](https://learn.chatgpt.com/docs/extend/mcp)、[Claude Code MCP](https://code.claude.com/docs/en/mcp)、[Qoder MCP Servers](https://docs.qoder.com/en/cli/mcp-servers)、[WorkBuddy MCP 指南](https://www.codebuddy.cn/docs/workbuddy/From-Beginner-to-Expert-Guide/Function-Description/MCP-Guide)。
+Trae Windows 已完成干净 Clone 实机验收。Codex、Claude Code、Qoder 和 WorkBuddy 当前已通过配置文件自动化契约检查，但在取得各自客户端实机证据前，只标记为“已提供项目级兼容配置”，不标记为“实机验证通过”。状态口径见 [发布与功能升级验收标准](./RELEASE_ACCEPTANCE.md)。
+
+对应官方说明：[Codex MCP](https://learn.chatgpt.com/docs/extend/mcp)、[Claude Code MCP](https://code.claude.com/docs/en/mcp)、[Qoder MCP Servers](https://docs.qoder.com/en/cli/mcp-servers)、[WorkBuddy / CodeBuddy MCP 指南](https://www.codebuddy.cn/docs/zh/ide/User-guide/MCP.html)。
 
 ## Trae
 
@@ -127,7 +129,7 @@ DIY 的目录同步和补全会读取 CSQAQ 并写入本地缓存；推荐、预
 
 完整的自然语言路由和回答规范见 [AGENT_WORKFLOW.md](./AGENT_WORKFLOW.md)。
 
-所有工具只读取公开外部数据并写入用户本地观察数据库，不执行购买、出售、挂单或交易。库存不可见、限流或失败时不会生成移除事件。本地持有人排行不是全网排行。
+分析工具只读取公开数据或用户凭据获准访问的数据，并按需写入用户本地观察数据库；监控、告警、反馈和企业微信通知只有在用户明确要求时才产生相应副作用。项目不执行购买、出售、挂单或交易。库存不可见、限流或失败时不会生成移除事件。本地持有人排行不是全网排行。
 
 ## MCP 自带的首次使用说明
 

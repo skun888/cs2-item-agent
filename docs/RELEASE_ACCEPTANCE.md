@@ -38,6 +38,8 @@ npm run acceptance:check
 
 GitHub Actions 必须在 Windows 与 Linux 的 Node.js 24 环境通过同一个 `acceptance:check`。本地通过不能替代 CI，CI 通过也不能替代下面的实机和真实数据验收。
 
+公开发布前还必须在联网环境单独执行 `npm run security:audit`。该检查不放入 CI，避免 npm 漏洞服务不可用时把代码回归误判为失败；结果必须记录在发布证据中。高危或严重漏洞阻止发布，中低危漏洞也必须修复，或记录不可达路径、缓解措施与上游跟踪依据。
+
 ## B. 干净 Clone 与 Agent 实机验收
 
 使用不含 `node_modules`、`dist`、`.env` 和数据库的新目录：
@@ -126,6 +128,7 @@ GitHub Actions 必须在 Windows 与 Linux 的 Node.js 24 环境通过同一个 
 Agent / 版本：
 
 自动化发布门槛：PASS / FAIL
+依赖安全审计：PASS / FAIL / BLOCKED_EXTERNAL
 干净 Clone 自动启动：PASS / FAIL / NOT_RUN
 Skill 与 MCP 自动发现：PASS / FAIL / NOT_RUN
 health_check 与使用说明：PASS / FAIL / NOT_RUN
