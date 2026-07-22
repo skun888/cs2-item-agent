@@ -5,6 +5,14 @@
   "type": "module",
   "private": true,
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/skun888/cs2-item-agent.git"
+  },
+  "homepage": "https://github.com/skun888/cs2-item-agent#readme",
+  "bugs": {
+    "url": "https://github.com/skun888/cs2-item-agent/issues"
+  },
   "engines": {
     "node": ">=24.0.0"
   },
@@ -22,6 +30,7 @@
     "smoke:mcp": "node scripts/smoke-mcp.mjs",
     "skill:sync": "node scripts/sync-skill-adapters.mjs",
     "skill:check": "node scripts/sync-skill-adapters.mjs --check",
+    "security:audit": "npm audit --omit=dev",
     "release:verify": "npm run skill:check && npm run mcp:config:check && npm run check && npm run smoke:mcp",
     "acceptance:check": "npm run release:verify",
     "audit:steamdt-inspect": "tsx scripts/audit-steamdt-inspect.ts",
@@ -38,5 +47,8 @@
     "sharp": "^0.35.3",
     "undici": "^8.7.0",
     "zod": "^4.4.3"
+  },
+  "overrides": {
+    "@hono/node-server": "^2.0.11"
   }
 }
