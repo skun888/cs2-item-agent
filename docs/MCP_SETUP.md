@@ -38,6 +38,7 @@ STEAM_PROXY_URL=http://127.0.0.1:7890
 | Codex | `.codex/config.toml` | 在可信项目中发现 `cs2_item_agent` 并启动本地 stdio 服务；可用 `/mcp` 检查状态 |
 | Claude Code | `.mcp.json` | 发现项目作用域的 `cs2-item-agent`；首次使用需批准项目 MCP |
 | Qoder | `.mcp.json` | 发现项目作用域的 `cs2-item-agent`；已有会话可用 `/mcp reload` 重新加载 |
+| Trae | `.trae/mcp.json` | 在设置的 MCP 页面开启“启用项目级 MCP”后，从项目根目录加载并启动 `cs2-item-agent` |
 | WorkBuddy | `.workbuddy/mcp.json` | 打开项目后读取项目 MCP 配置并启动同一服务 |
 
 这些配置负责发现统一启动器，启动器负责准备依赖、构建、迁移和启动 MCP。客户端要求“信任项目”“批准 MCP”属于本地命令执行的安全边界，项目不能也不应该绕过。Codex 的项目配置为首次安装保留 300 秒启动时间；其他客户端若提前超时，可使用上面的 `npm run setup` 预热。
@@ -46,14 +47,15 @@ STEAM_PROXY_URL=http://127.0.0.1:7890
 
 ## Trae
 
-Trae 官方页面已确认支持 project-level MCP server，但没有给出一个可提交到仓库、由客户端自动读取的配置文件路径，本项目也尚未完成真实 Trae 客户端验收。为避免提交一个客户端不会读取的猜测文件，当前保留手动导入：
+Trae Windows 实机界面已确认项目级 MCP 从项目根目录 `.trae/mcp.json` 加载。首次打开 Clone 的仓库时：
 
-- 打开 Trae 的 MCP 管理页面；
-- 导入或参考 `examples/mcp/trae.mcp.json`；
-- 把其中 `ABSOLUTE_PATH_TO_REPOSITORY` 替换为本机仓库绝对路径；
-- Name 保持 `cs2-item-agent`，Command 保持 `node`。
+1. 按 `Ctrl + ,` 打开设置并搜索 `MCP`；
+2. 打开“启用项目级 MCP”；
+3. 确认服务器列表出现 `cs2-item-agent`；
+4. 批准项目本地命令并等待首次自动准备完成；
+5. 填写 `.env` 后重启 MCP，再实际调用 `health_check`。
 
-配置文件路径确认并通过真实客户端验收后，再把 Trae 纳入 Clone 后自动发现基线。参考：[Trae MCP 文档](https://docs.trae.ai/ide/model-context-protocol)、[Trae 更新日志](https://www.trae.ai/changelog)。
+启用项目级 MCP 是一次安全授权，不需要用户手动填写服务器命令或仓库绝对路径。参考：[Trae MCP 文档](https://docs.trae.ai/ide/model-context-protocol)、[Trae 更新日志](https://www.trae.ai/changelog)。
 
 ## 其他 MCP 客户端
 
@@ -119,5 +121,5 @@ DIY 的目录同步和补全会读取 CSQAQ 并写入本地缓存；推荐、预
 3. 填写新生成的 `.env` 后必须重启 MCP，正在运行的进程不会热加载 Key；
 4. 直接执行 `node scripts/run-mcp.mjs` 时只有 stderr 准备日志、没有普通 stdout 是正常现象，stdio 正在等待 MCP 客户端消息；
 5. MCP 服务器与自动启动器不得向 stdout 打印诊断日志，否则会破坏 JSON-RPC；
-6. 项目级配置不要改成用户专属绝对路径；只有 Trae 当前手动导入示例需要替换绝对路径，JSON 中的反斜杠写成 `\\`；
+6. 项目级配置不要改成用户专属绝对路径；所有已适配客户端都通过仓库相对路径启动统一启动器；
 7. 运行 `npm run mcp:config:check` 可检查已提交配置是否仍然无密钥、无绝对路径并统一使用共享启动器。

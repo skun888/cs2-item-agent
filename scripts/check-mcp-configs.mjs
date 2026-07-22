@@ -3,7 +3,7 @@ import { resolve } from "node:path";
 
 const projectRoot = resolve(import.meta.dirname, "..");
 const launcherPath = "scripts/run-mcp.mjs";
-const jsonConfigPaths = [".mcp.json", ".workbuddy/mcp.json"];
+const jsonConfigPaths = [".mcp.json", ".trae/mcp.json", ".workbuddy/mcp.json"];
 
 function assert(condition, message) {
   if (!condition) {

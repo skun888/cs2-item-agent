@@ -7,7 +7,7 @@ const root = process.cwd();
 const launcherPath = "scripts/run-mcp.mjs";
 
 test("project MCP configurations use the shared path-free launcher", async () => {
-  for (const relativePath of [".mcp.json", ".workbuddy/mcp.json"]) {
+  for (const relativePath of [".mcp.json", ".trae/mcp.json", ".workbuddy/mcp.json"]) {
     const content = await readFile(resolve(root, relativePath), "utf8");
     const config = JSON.parse(content) as {
       mcpServers: Record<string, { command: string; args: string[]; env?: unknown }>;

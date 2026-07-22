@@ -1310,7 +1310,7 @@ CLI 新增 `market trade`，`market decide` 保留为兼容别名；MCP 新增 `
 - `release:verify` 统一执行严格类型检查、构建、完整测试与 MCP 协议冒烟；
 - `.agents/skills/cs2-item-agent` 是专属 Skill 的唯一权威来源，客户端适配入口由脚本生成并在发布验证中检查一致性；
 - Codex 使用 `.codex/config.toml`，Claude Code 与 Qoder 共用根目录 `.mcp.json`，WorkBuddy 使用 `.workbuddy/mcp.json`；所有项目级 MCP 配置统一调用 `scripts/run-mcp.mjs`，不保存绝对路径或密钥，并由 `mcp:config:check` 纳入发布验证；
-- Trae 已确认具备项目级 MCP 能力，但仓库配置文件的准确落点仍需官方文档与真实客户端双重验证；在此之前只维护手动导入示例，不以猜测文件名冒充自动接入；
+- Trae Windows 实机界面已确认从项目根目录 `.trae/mcp.json` 加载项目级 MCP；仓库提交该配置，用户首次打开项目时只需开启“启用项目级 MCP”，不再手动填写服务器命令和绝对路径；
 - 客户端专门适配范围收敛为 Codex、Claude Code、Qoder、WorkBuddy 和 Trae；其他支持本地 stdio MCP 的客户端只保留通用配置兼容，不继续增加客户端专属核心或目录；
 - `scripts/run-mcp.mjs` 作为唯一自动启动器：Node.js 24 仍是外部前置条件；启动器自动创建且不覆盖 `.env`、按 `package-lock.json` 执行可复现依赖安装、按源码新旧决定构建、串行执行幂等数据库迁移，并把所有准备日志限制在 stderr；
 - `.local/mcp-bootstrap.lock` 防止多个 Agent 客户端首次打开同一仓库时并发修改依赖或数据库；首次准备超过客户端等待时间时可用 `npm run setup` 预热，不改变最终 MCP 启动入口；

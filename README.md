@@ -8,11 +8,11 @@ CS2 Item Agent 是一个免费开源、本地优先、模型无关的 CS2 饰品
 
 ## Agent 项目接入
 
-仓库已提交项目级 MCP 配置：Codex 读取 `.codex/config.toml`，Claude Code 与 Qoder 读取根目录 `.mcp.json`，WorkBuddy 读取 `.workbuddy/mcp.json`。它们都通过相对路径启动同一个 `scripts/run-mcp.mjs`，不要求用户修改仓库路径，也不会把 API Key 写进客户端配置。首次打开仓库时，客户端可能要求信任项目或批准本地 MCP，这是正常的安全确认。
+仓库已提交项目级 MCP 配置：Codex 读取 `.codex/config.toml`，Claude Code 与 Qoder 读取根目录 `.mcp.json`，Trae 读取 `.trae/mcp.json`，WorkBuddy 读取 `.workbuddy/mcp.json`。它们都通过相对路径启动同一个 `scripts/run-mcp.mjs`，不要求用户修改仓库路径，也不会把 API Key 写进客户端配置。首次打开仓库时，客户端可能要求信任项目、启用项目级 MCP 或批准本地命令，这是正常的安全确认。
 
 `scripts/run-mcp.mjs` 是统一自动启动器。客户端首次启动它时会检查 Node.js 24、创建但绝不覆盖 `.env`、在缺少或锁文件更新时执行 `npm ci`、在构建缺失或源码更新时执行 `npm run build`、应用本地 SQLite 迁移，然后启动 MCP。准备过程只向 stderr 写日志，不会污染 stdio JSON-RPC。用户只需在生成的 `.env` 填写所需 API Key 并重启 MCP；如果客户端首次启动超时，可在仓库根目录手动运行一次 `npm run setup`。
 
-Trae 已公开支持项目级 MCP，但仓库配置文件的准确落点尚未完成官方文档与真实客户端双重验证，因此暂不提交猜测路径；当前按 [MCP 接入说明](./docs/MCP_SETUP.md) 导入无密钥示例。
+Trae Windows 实机界面已确认项目级配置路径为 `.trae/mcp.json`；用户首次打开仓库时需要开启“启用项目级 MCP”，之后由 Trae 加载仓库配置并启动统一启动器。完整步骤见 [MCP 接入说明](./docs/MCP_SETUP.md)。
 
 ## 本地运行
 
