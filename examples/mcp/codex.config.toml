@@ -1,0 +1,6 @@
+[mcp_servers.cs2_item_agent]
+command = "node"
+args = ["C:\\ABSOLUTE_PATH_TO_REPOSITORY\\scripts\\run-mcp.mjs"]
+startup_timeout_sec = 20
+tool_timeout_sec = 60
+enabled = true

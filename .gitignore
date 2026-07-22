@@ -1,0 +1,27 @@
+node_modules/
+dist/
+coverage/
+*.log
+
+# Local secrets
+.env
+.env.*
+!.env.example
+
+# Local databases and user-owned state
+data/
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+.local/
+
+# Real-ID integration inputs must remain local
+tests/integration/private/
+
+# Editors and operating systems
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "cs2-item-agent": {
+      "command": "node",
+      "args": [
+        "C:\\ABSOLUTE_PATH_TO_REPOSITORY\\scripts\\run-mcp.mjs"
+      ]
+    }
+  }
+}

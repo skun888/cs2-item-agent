@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 2,
+  "currency": "CNY",
+  "steamSaleNetRate": 0.869,
+  "steamMarketReferenceCnyPerUsd": 7.2,
+  "purchase": {
+    "BUFF": { "feeRate": 0, "fixedFee": 0 },
+    "YYYP": { "feeRate": 0, "fixedFee": 0 }
+  },
+  "platformSale": {
+    "BUFF": { "feeRate": 0.025, "fixedFee": 0 },
+    "YYYP": { "feeRate": 0.025, "fixedFee": 0 }
+  },
+  "riskBufferRate": 0,
+  "selectionPolicy": {
+    "steamBalance": {
+      "minimumCurrentBalanceRatio": 1.5,
+      "minimumDefensiveBalanceRatio": 1.35
+    },
+    "platformBalance": {
+      "minimumCurrentCashReturnPct": 0,
+      "minimumDefensiveCashReturnPct": -5
+    },
+    "minimumTurnover": 10,
+    "maximumBidToListingRatio": 1.25
+  },
+  "note": "示例参数。每日卡价由 CSQAQ 获取；Steam 参考汇率、平台费率和阈值必须按用户实际情况修改。"
+}

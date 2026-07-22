@@ -1,0 +1,15 @@
+{
+  "_fixtureNotice": "Synthetic contract fixture. It is not a captured SteamDT response.",
+  "success": true,
+  "data": [
+    {
+      "platform": "SYNTHETIC_PLATFORM_A",
+      "platformItemId": "synthetic-item-10001",
+      "sellPrice": 12.34,
+      "sellCount": 56,
+      "biddingPrice": 11.11,
+      "biddingCount": 78,
+      "updateTime": 1784505600000
+    }
+  ]
+}

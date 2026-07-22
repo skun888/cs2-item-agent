@@ -1,0 +1,45 @@
+import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
+import { resolve } from "node:path";
+import test from "node:test";
+
+const root = process.cwd();
+const skillDirectory = resolve(root, "skills", "cs2-item-agent");
+
+test("skill frontmatter and UI metadata remain portable", async () => {
+  const skill = await readFile(resolve(skillDirectory, "SKILL.md"), "utf8");
+  const metadata = await readFile(resolve(skillDirectory, "agents", "openai.yaml"), "utf8");
+  const frontmatter = skill.match(/^---\r?\n([\s\S]*?)\r?\n---/);
+  assert.ok(frontmatter, "SKILL.md must contain YAML frontmatter");
+  const keys = [...frontmatter[1]!.matchAll(/^([a-zA-Z0-9_-]+):/gm)].map((match) => match[1]);
+  assert.deepEqual(keys, ["name", "description"]);
+  assert.match(frontmatter[1]!, /^name: cs2-item-agent$/m);
+  assert.match(metadata, /default_prompt: "Use \$cs2-item-agent /);
+  assert.match(skill, /Cross-Agent portability/);
+});
+
+test("every registered MCP tool is documented by the skill", async () => {
+  const serverSource = await readFile(resolve(root, "src", "mcp", "create-server.ts"), "utf8");
+  const contracts = await readFile(resolve(skillDirectory, "references", "tool-contracts.md"), "utf8");
+  const toolNames = [...serverSource.matchAll(/registerTool\(\s*"([^"]+)"/g)].map((match) => match[1]!);
+  assert.ok(toolNames.length >= 32, "expected the complete stage 7 MCP surface");
+  const missing = toolNames.filter((name) => !contracts.includes(`\`${name}\``));
+  assert.deepEqual(missing, [], `undocumented MCP tools: ${missing.join(", ")}`);
+});
+
+test("skill links resolve and preserve evidence boundaries", async () => {
+  const skill = await readFile(resolve(skillDirectory, "SKILL.md"), "utf8");
+  const linkedReferences = [...skill.matchAll(/\(references\/([^)]+\.md)\)/g)].map((match) => match[1]!);
+  assert.ok(linkedReferences.length >= 5);
+  for (const file of new Set(linkedReferences)) {
+    const content = await readFile(resolve(skillDirectory, "references", file), "utf8");
+    assert.ok(content.trim().length > 100, `${file} should contain substantive instructions`);
+  }
+  const evidence = await readFile(resolve(skillDirectory, "references", "evidence-policy.md"), "utf8");
+  const inventory = await readFile(resolve(skillDirectory, "references", "inventory-monitoring.md"), "utf8");
+  const hanging = await readFile(resolve(skillDirectory, "references", "hanging-analysis.md"), "utf8");
+  assert.match(evidence, /未知/);
+  assert.match(evidence, /不是.*成交|not a completed transaction/i);
+  assert.match(inventory, /not a complete Steam-wide census/);
+  assert.match(hanging, /Never say “七天后一定能卖到” or “稳赚”/);
+});

@@ -1,0 +1,4 @@
+interface:
+  display_name: "CS2 Item Agent"
+  short_description: "Analyze CS2 trading, hanging, inventories, and DIY"
+  default_prompt: "Use $cs2-item-agent to route this CS2 request to the independent market-trading or hanging-execution model and answer with local MCP evidence and explicit uncertainty."

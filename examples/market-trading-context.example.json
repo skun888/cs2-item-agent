@@ -1,0 +1,32 @@
+{
+  "sector": {
+    "name": "千战指数",
+    "returnPct": -8.11,
+    "windowDays": 15,
+    "provenance": {
+      "sourceType": "manual_provider_observation",
+      "label": "用户提供的板块截图",
+      "observedAt": "2026-07-22T00:00:00+08:00",
+      "note": "示例值会过期，真实分析前必须更新。"
+    }
+  },
+  "effectiveCirculatingSupply": {
+    "low": 10000,
+    "central": 12000,
+    "high": 14000,
+    "provenance": {
+      "sourceType": "user_expert",
+      "label": "用户市场经验估算",
+      "observedAt": "2026-07-22T00:00:00+08:00"
+    }
+  },
+  "dealerOperation": {
+    "suitability": "high",
+    "provenance": {
+      "sourceType": "user_expert",
+      "label": "用户确认的梦魇交易属性",
+      "observedAt": "2026-07-22T00:00:00+08:00",
+      "note": "行情交易品，适合大商反复运作；不是稳定挂刀品。"
+    }
+  }
+}

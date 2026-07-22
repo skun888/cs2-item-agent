@@ -1,0 +1,11 @@
+{
+  "_fixtureNotice": "Synthetic values using the five-element shape verified by a local SteamDT response. This is not a captured provider response.",
+  "success": true,
+  "data": [
+    ["1700000000", 10.0, 10.2, 10.3, 9.9],
+    ["1700007200", 10.2, 10.1, 10.25, 10.0],
+    ["1700014400", 10.1, 10.4, 10.5, 10.05]
+  ],
+  "errorCode": 0,
+  "errorMsg": ""
+}

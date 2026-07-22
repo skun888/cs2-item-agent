@@ -1,0 +1,33 @@
+{
+  "name": "地狱烈焰低价并缩量",
+  "expression": {
+    "type": "all",
+    "conditions": [
+      {
+        "type": "market",
+        "marketHashName": "M4A4 | Hellfire (Factory New)",
+        "platform": "BUFF",
+        "provider": "any",
+        "metric": "sell_price",
+        "mode": "current",
+        "operator": "lt",
+        "threshold": 2000
+      },
+      {
+        "type": "market",
+        "marketHashName": "M4A4 | Hellfire (Factory New)",
+        "platform": "BUFF",
+        "provider": "any",
+        "metric": "sell_count",
+        "mode": "change_rate",
+        "windowMinutes": 1440,
+        "operator": "lte",
+        "threshold": -0.2
+      }
+    ]
+  },
+  "cooldownMinutes": 60,
+  "minimumConsecutiveMatches": 1,
+  "notifyOnRecovery": false,
+  "maxDataSkewMinutes": 30
+}
