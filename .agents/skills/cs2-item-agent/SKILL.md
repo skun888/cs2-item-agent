@@ -25,7 +25,7 @@ Choose the narrowest route that answers the user:
 
 | User intent | Preferred route |
 |---|---|
-| Setup or missing data | `health_check` |
+| Setup, first use, available capabilities, or missing data | `health_check`; follow its `usageGuide` and current configuration status |
 | Current price or visible book | `get_market_prices` |
 | Compare all configured market sources | `compare_market_prices` |
 | Price history only | `get_market_kline` |
@@ -54,11 +54,12 @@ Read [references/tool-contracts.md](references/tool-contracts.md) before using a
 ## Execution workflow
 
 1. Resolve the exact item variant. Prefer exact English `marketHashName`. Clarify wear, StatTrak, Souvenir, pattern, or other material variants only when needed.
-2. Decide whether the question needs current data, local history, provider coverage, or a scenario calculation.
-3. Call the minimum tool set. Do not call holder, supply, DIY, or notification tools merely because they exist.
-4. Inspect per-adapter status, tool errors, and limitations before interpreting values. If the required adapter is not configured, explain the missing configuration without asking for the secret value in chat.
-5. Compare observation times before combining sources. Do not silently combine stale and fresh values as if simultaneous.
-6. Produce a decision-oriented Chinese answer using the response contract below.
+2. When the user asks how to start or what the Agent can do, call `health_check` and present its `usageGuide`, configured capabilities, missing prerequisites, and safe example prompts. Never ask the user to paste a secret into chat.
+3. Decide whether the question needs current data, local history, provider coverage, or a scenario calculation.
+4. Call the minimum tool set. Do not call holder, supply, DIY, or notification tools merely because they exist.
+5. Inspect per-adapter status, tool errors, and limitations before interpreting values. If the required adapter is not configured, explain the missing configuration without asking for the secret value in chat.
+6. Compare observation times before combining sources. Do not silently combine stale and fresh values as if simultaneous.
+7. Produce a decision-oriented Chinese answer using the response contract below.
 
 Before any decision question, read [references/model-routing.md](references/model-routing.md). For broad market judgment, also read [references/market-methodology.md](references/market-methodology.md). For hanging, also read [references/hanging-analysis.md](references/hanging-analysis.md). For inventory or holder questions, read [references/inventory-monitoring.md](references/inventory-monitoring.md). For DIY, read [references/diy-guidance.md](references/diy-guidance.md).
 

@@ -14,6 +14,8 @@ CS2 Item Agent 是一个免费开源、本地优先、模型无关的 CS2 饰品
 
 Trae Windows 实机界面已确认项目级配置路径为 `.trae/mcp.json`；用户首次打开仓库时需要开启“启用项目级 MCP”，之后由 Trae 加载仓库配置并启动统一启动器。完整步骤见 [MCP 接入说明](./docs/MCP_SETUP.md)。
 
+MCP 启动后不需要手动运行下面的 CLI 命令。用户可以直接在 Agent 对话中说“怎么开始”“检查 CS2 Item Agent 配置”或提出具体的 CS2 饰品问题；Agent 会先调用 `health_check`，读取 MCP 自带的中文 `usageGuide`、当前配置状态、六类能力和安全示例，再选择相应工具。CLI 仅供开发、排错和独立验证使用。
+
 ## 本地运行
 
 要求 Node.js 24 或更高版本。

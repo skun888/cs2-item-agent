@@ -100,10 +100,31 @@ test("MCP server lists the complete tools and answers health over the protocol",
 
     const health = await client.callTool({ name: "health_check", arguments: {} });
     assert.equal(health.isError, undefined);
-    assert.deepEqual(health.structuredContent, {
+    assert.deepEqual(
+      {
+        ok: (health.structuredContent as { ok: boolean }).ok,
+        steamDt: (health.structuredContent as { steamDt: unknown }).steamDt,
+      },
+      {
       ok: true,
       steamDt: { configured: false },
-    });
+      },
+    );
+    const usageGuide = (health.structuredContent as {
+      usageGuide: {
+        language: string;
+        capabilityGroups: readonly { name: string; description: string }[];
+        safeExamplePrompts: readonly { prompt: string; route: string }[];
+        sideEffects: { trading: string };
+        configurationReminder: string;
+      };
+    }).usageGuide;
+    assert.equal(usageGuide.language, "zh-CN");
+    assert.equal(usageGuide.capabilityGroups.length, 6);
+    assert.equal(usageGuide.safeExamplePrompts.length, 5);
+    assert.equal(usageGuide.safeExamplePrompts[0]?.route, "compare_market_prices");
+    assert.match(usageGuide.sideEffects.trading, /不提供下单/);
+    assert.match(usageGuide.configurationReminder, /本地 \.env/);
 
     const fees = await client.callTool({ name: "show_hanging_fee_assumptions", arguments: {} });
     assert.equal(fees.isError, undefined);
