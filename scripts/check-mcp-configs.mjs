@@ -30,10 +30,18 @@ for (const relativePath of jsonConfigPaths) {
   const server = servers["cs2-item-agent"];
   assert(server && typeof server === "object", `${relativePath} must define cs2-item-agent`);
   assert(server.command === "node", `${relativePath} must invoke Node.js from PATH`);
+  const expectedLauncherPath =
+    relativePath === ".trae/mcp.json" ? "${workspaceFolder}/scripts/run-mcp.mjs" : launcherPath;
   assert(
-    Array.isArray(server.args) && server.args.length === 1 && server.args[0] === launcherPath,
+    Array.isArray(server.args) && server.args.length === 1 && server.args[0] === expectedLauncherPath,
     `${relativePath} must invoke the shared MCP launcher`,
   );
+  if (relativePath === ".trae/mcp.json") {
+    assert(
+      server.cwd === "${workspaceFolder}",
+      `${relativePath} must launch from the Trae workspace root`,
+    );
+  }
   assert(!("env" in server), `${relativePath} must not copy secrets into MCP configuration`);
 }
 
