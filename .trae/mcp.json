@@ -3,8 +3,9 @@
     "cs2-item-agent": {
       "command": "node",
       "args": [
-        "scripts/run-mcp.mjs"
-      ]
+        "${workspaceFolder}/scripts/run-mcp.mjs"
+      ],
+      "cwd": "${workspaceFolder}"
     }
   }
 }
